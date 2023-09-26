@@ -1,0 +1,44 @@
+version: '3'
+
+networks:
+  my_network:
+    driver: bridge
+services:
+  hornet-env:
+    image: openjdk:8
+    networks:
+      - my_network
+    volumes:
+      - /root/work/Rozgar/apps:/home/dev012/apps
+      - /root/work/Rozgar/groovy:/home/dev012/groovy
+      - /root/work/Rozgar/grails:/home/dev012/grails
+      - /etc/hosts:/etc/hosts
+      - /root/work/Rozgar/entrypoint.sh:/home/dev012/apps/entrypoint.sh
+    environment:
+      - GROOVY_HOME=/home/dev012/groovy/groovy-1.8.6
+      - GROOVY_BIN=/home/dev012/groovy/groovy-1.8.6/bin
+      - GRAILS_HOME=/home/dev012/grails/grails-3.0.8
+      - GRAILS_BIN=/home/dev012/grails/grails-3.0.8/bin
+      - TZ=Asia/Karachi
+
+    command: /home/dev012/apps/entrypoint.sh
+    ports:
+     - "127.0.0.1:11901:11901"
+     - "9098:0098"
+
+  mysql:
+    image: mysql:8.0
+    networks:
+      - my_network
+    environment:
+      TZ: Asia/Karachi
+      MYSQL_ROOT_PASSWORD: your passwd
+      MYSQL_DATABASE: name_of_database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: passwd
+    ports:
+      - "3306:3306"
+    volumes:
+      - /root/work/Rozgar/name of the database backup:/docker-entrypoint-initdb.d/db-blue_collar.sql
+
+      - /root/work/Rozgar/mysql:/var/lib/mysql
